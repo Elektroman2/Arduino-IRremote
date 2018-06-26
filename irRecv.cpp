@@ -6,6 +6,11 @@ hw_timer_t *timer;
 void IRTimer(); // defined in IRremote.cpp
 #endif
 
+#ifdef IR_TIMER_USE_STM32_TIM2
+void IRTimer(); // defined in IRremote.cpp
+#endif
+
+
 //+=============================================================================
 // Decodes the received IR message
 // Returns 0 if no data ready, 1 if data ready.
@@ -132,6 +137,14 @@ void  IRrecv::enableIRIn ( )
 	// every 50ns, autoreload = true
 	timerAlarmWrite(timer, 50, true);
 	timerAlarmEnable(timer);
+#elif STM32_F1_LINE
+	Timer2.setPeriod(50); // in microseconds
+	nvic_irq_set_priority( NVIC_TIMER6,12);
+	Timer2.attachInterrupt(TIMER_UPDATE_INTERRUPT, IRTimer);
+	Timer2.refresh();
+
+
+
 #else
 	cli();
 	// Setup pulse clock timer interrupt

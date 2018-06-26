@@ -46,6 +46,10 @@
 #	define BLINKLED        255
 #	define BLINKLED_ON()   1
 #	define BLINKLED_OFF()  1
+#elif defined(STM32_F1_LINE)
+#	define BLINKLED        BOARD_LED_PIN
+#	define BLINKLED_ON()   (digitalWrite(BOARD_LED_PIN, HIGH))
+#	define BLINKLED_OFF()  (digitalWrite(BOARD_LED_PIN, LOW))
 #else
 #	define BLINKLED        13
 #	define BLINKLED_ON()  (PORTB |= B00100000)
@@ -146,6 +150,8 @@
 
 #elif defined(ESP32)
 	#define IR_TIMER_USE_ESP32
+#elif defined(STM32_F1_LINE)
+	#define IR_TIMER_USE_STM32_TIM2
 #else
 // Arduino Duemilanove, Diecimila, LilyPad, Mini, Fio, Nano, etc
 // ATmega48, ATmega88, ATmega168, ATmega328
@@ -584,6 +590,16 @@
 #define TIMER_ENABLE_INTR    
 #define TIMER_DISABLE_INTR   
 #define TIMER_INTR_NAME      
+
+
+#elif STM32_F1_LINE
+#define TIMER_RESET
+#define TIMER_ENABLE_PWM
+#define TIMER_DISABLE_PWM   Serial.println("IRsend not implemented for ESP32 yet");
+#define TIMER_ENABLE_INTR
+#define TIMER_DISABLE_INTR
+#define TIMER_INTR_NAME
+
 
 //---------------------------------------------------------
 // Unknown Timer
